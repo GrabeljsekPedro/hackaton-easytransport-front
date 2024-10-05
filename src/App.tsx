@@ -1,14 +1,15 @@
 function App() {
   return (
-    <main>
-      <h1 className="text-4xl">Hello World</h1>
-      <p className="text-md">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate
-        voluptatibus eaque ab aperiam cumque fugit iste cupiditate asperiores
-        sit quibusdam totam porro saepe, tenetur laudantium nihil quisquam
-        officiis molestiae exercitationem.
-      </p>
-    </main>
+    <body className="h-screen">
+      <header className="h-[12%] bg-slate-600 content-center">
+        <h1 className="text-4xl text-white">EasyTransport</h1>
+      </header>
+      <main className="h-[88%] grid grid-cols-2 gap-4 p-4">
+        <div className="bg-slate-500 rounded-md">Hola</div>
+        <div className="bg-slate-500 rounded-md">Hola</div>
+        <div className="col-span-2 bg-slate-500 rounded-md">Hola</div>
+      </main>
+    </body>
   );
 }
 
