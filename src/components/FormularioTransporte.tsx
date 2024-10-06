@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo } from "react";
 
 interface Transportista {
   id: string;
@@ -19,23 +19,40 @@ interface FormularioTransporteProps {
   transportistas: Transportista[];
 }
 
-function FormularioTransporte({ onSubmit, transportistas }: FormularioTransporteProps) {
-  const [origen, setOrigen] = useState('');
-  const [destino, setDestino] = useState('');
-  const [tipoCargamento, setTipoCargamento] = useState('');
+function FormularioTransporte({
+  onSubmit,
+  transportistas,
+}: FormularioTransporteProps) {
+  const [origen, setOrigen] = useState("");
+  const [destino, setDestino] = useState("");
+  const [tipoCargamento, setTipoCargamento] = useState("");
 
   const origenes = useMemo(() => {
-    return [...new Set(transportistas.map(t => t.fields.Origen))];
+    return [...new Set(transportistas.map((t) => t.fields.Origen))];
   }, [transportistas]);
 
   const destinos = useMemo(() => {
     if (!origen) return [];
-    return [...new Set(transportistas.filter(t => t.fields.Origen === origen).map(t => t.fields.Destino))];
+    return [
+      ...new Set(
+        transportistas
+          .filter((t) => t.fields.Origen === origen)
+          .map((t) => t.fields.Destino)
+      ),
+    ];
   }, [transportistas, origen]);
 
   const tiposCargamento = useMemo(() => {
     if (!origen || !destino) return [];
-    return [...new Set(transportistas.filter(t => t.fields.Origen === origen && t.fields.Destino === destino).map(t => t.fields["Tipo de Cargamento Actual"]))];
+    return [
+      ...new Set(
+        transportistas
+          .filter(
+            (t) => t.fields.Origen === origen && t.fields.Destino === destino
+          )
+          .map((t) => t.fields["Tipo de Cargamento Actual"])
+      ),
+    ];
   }, [transportistas, origen, destino]);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -45,19 +62,21 @@ function FormularioTransporte({ onSubmit, transportistas }: FormularioTransporte
 
   const handleOrigenChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setOrigen(e.target.value);
-    setDestino('');
-    setTipoCargamento('');
+    setDestino("");
+    setTipoCargamento("");
   };
 
   const handleDestinoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setDestino(e.target.value);
-    setTipoCargamento('');
+    setTipoCargamento("");
   };
 
   return (
     <form onSubmit={handleSubmit} className="p-4">
-      <div className="mb-4">
-        <label htmlFor="origen" className="block text-white mb-2">Origen:</label>
+      <div className="mb-2">
+        <label htmlFor="origen" className="block text-black mb-2">
+          Origen:
+        </label>
         <select
           id="origen"
           value={origen}
@@ -67,12 +86,16 @@ function FormularioTransporte({ onSubmit, transportistas }: FormularioTransporte
         >
           <option value="">Seleccione un origen</option>
           {origenes.map((o) => (
-            <option key={o} value={o}>{o}</option>
+            <option key={o} value={o}>
+              {o}
+            </option>
           ))}
         </select>
       </div>
-      <div className="mb-4">
-        <label htmlFor="destino" className="block text-white mb-2">Destino:</label>
+      <div className="mb-2">
+        <label htmlFor="destino" className="block text-black mb-2">
+          Destino:
+        </label>
         <select
           id="destino"
           value={destino}
@@ -83,12 +106,16 @@ function FormularioTransporte({ onSubmit, transportistas }: FormularioTransporte
         >
           <option value="">Seleccione un destino</option>
           {destinos.map((d) => (
-            <option key={d} value={d}>{d}</option>
+            <option key={d} value={d}>
+              {d}
+            </option>
           ))}
         </select>
       </div>
-      <div className="mb-4">
-        <label htmlFor="tipoCargamento" className="block text-white mb-2">Tipo de Cargamento:</label>
+      <div className="mb-2">
+        <label htmlFor="tipoCargamento" className="block text-black mb-2">
+          Tipo de Cargamento:
+        </label>
         <select
           id="tipoCargamento"
           value={tipoCargamento}
@@ -99,11 +126,16 @@ function FormularioTransporte({ onSubmit, transportistas }: FormularioTransporte
         >
           <option value="">Seleccione un tipo de cargamento</option>
           {tiposCargamento.map((t) => (
-            <option key={t} value={t}>{t}</option>
+            <option key={t} value={t}>
+              {t}
+            </option>
           ))}
         </select>
       </div>
-      <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600">
+      <button
+        type="submit"
+        className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+      >
         Buscar Transportista
       </button>
     </form>

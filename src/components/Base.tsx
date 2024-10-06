@@ -66,10 +66,10 @@ function Base({ transportistas, encontrarMejorTransportista }: BaseProps) {
 
   return (
     <main className="h-[88%] grid grid-cols-2 gap-4 p-4">
-      <div className="bg-slate-500 rounded-md p-4">
+      <div className="rounded-md p-4">
         <Map />
       </div>
-      <div className="bg-slate-500 rounded-md">
+      <div className="rounded-md">
         <FormularioTransporte
           onSubmit={handleSubmit}
           transportistas={transportistas}
