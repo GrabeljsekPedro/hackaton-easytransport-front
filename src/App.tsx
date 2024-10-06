@@ -3,42 +3,39 @@ import Airtable from 'airtable';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from "./components/Header";
 import Landing from "./components/Landing";
-import FormularioTransporte from "./components/FormularioTransporte";
-import axios from 'axios';
+import Base from "./components/Base";
 
-// Configurar Airtable
-const base = new Airtable({apiKey: import.meta.env.VITE_REACT_APP_AIRTABLE_API_KEY}).base(import.meta.env.VITE_REACT_APP_AIRTABLE_BASE_ID);
 interface Transportista {
   id: string;
   fields: {
-    Nombre: string;
+    Transportista: string;
     Destino: string;
     Origen: string;
-    TipoCargamento: string;
-    DiasEnCarretera: number;
-    PorcentajeCarga: number;
-    CapacidadRestante: number;
-    Experiencia: number;
-    CondicionVehiculo: string;
-    Kilometraje: number;
+    "Tipo de Cargamento Actual": string;
+    "Días en Carretera": number;
+    "Porcentaje de Carga": number;
+    "Experiencia (años)": number;
+    Descripcion: string;
   };
 }
 
 function App() {
   const [transportistas, setTransportistas] = useState<Transportista[]>([]);
-  const [recomendacion, setRecomendacion] = useState<string>('');
 
   useEffect(() => {
-    base('Transportistas').select({
+    const airtableBase = new Airtable({apiKey: 'patUNai9hvj45F6Iw.6f300d5e97059eebf0de31f5216e4e78a998b40868990b087175b05b8feed0d0'}).base('appbC9nRPU0orhMtd');
+    airtableBase('Transportistas').select({
       view: "Grid view"
-    }).eachPage((records: Airtable.Records<Airtable.FieldSet>, fetchNextPage: () => void) => {
+    }).eachPage((records, fetchNextPage) => {
       setTransportistas(records.map(record => ({
         id: record.id,
         fields: record.fields as Transportista['fields']
       })));
       fetchNextPage();
-    }, (err: Error | null) => {
-      if (err) { console.error(err); return; }
+    }, (err) => {
+      if (err) {
+        console.error('Error al cargar datos de Airtable:', err);
+      }
     });
   }, []);
 
@@ -46,46 +43,8 @@ function App() {
     return transportistas.find(t => 
       t.fields.Destino === destino &&
       t.fields.Origen === origen &&
-      t.fields.TipoCargamento === tipoCargamento
+      t.fields["Tipo de Cargamento Actual"] === tipoCargamento
     );
-  };
-
-  const obtenerRecomendacionIA = async (transportista: Transportista) => {
-    const prompt = `Basándote en la siguiente información del transportista, explica por qué es la mejor opción para el transporte:
-    Nombre: ${transportista.fields.Nombre}
-    Experiencia: ${transportista.fields.Experiencia} años
-    Condición del vehículo: ${transportista.fields.CondicionVehiculo}
-    Días en carretera: ${transportista.fields.DiasEnCarretera}
-    Porcentaje de carga: ${transportista.fields.PorcentajeCarga}%
-    Capacidad restante: ${transportista.fields.CapacidadRestante}%
-    Kilometraje: ${transportista.fields.Kilometraje} km`;
-
-    try {
-      const response = await axios.post('https://api.openai.com/v1/engines/davinci/completions', {
-        prompt: prompt,
-        max_tokens: 150
-      }, {
-        headers: {
-          'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      return response.data.choices[0].text.trim();
-    } catch (error) {
-      console.error('Error al obtener recomendación de IA:', error);
-      return 'No se pudo obtener una recomendación en este momento.';
-    }
-  };
-
-  const manejarEnvioFormulario = async (destino: string, origen: string, tipoCargamento: string) => {
-    const mejorTransportista = encontrarMejorTransportista(destino, origen, tipoCargamento);
-    if (mejorTransportista) {
-      const recomendacionIA = await obtenerRecomendacionIA(mejorTransportista);
-      setRecomendacion(recomendacionIA);
-    } else {
-      setRecomendacion('No se encontró un transportista adecuado para tus requerimientos.');
-    }
   };
 
   return (
@@ -95,9 +54,15 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/transporte" element={
-            <FormularioTransporte 
-              onSubmit={manejarEnvioFormulario} 
-              recomendacion={recomendacion} 
+            <Base 
+              transportistas={transportistas}
+              encontrarMejorTransportista={encontrarMejorTransportista}
+            />
+          } />
+          <Route path="/base" element={
+            <Base 
+              transportistas={transportistas}
+              encontrarMejorTransportista={encontrarMejorTransportista}
             />
           } />
         </Routes>
