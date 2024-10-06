@@ -23,7 +23,7 @@ function App() {
   const [transportistas, setTransportistas] = useState<Transportista[]>([]);
 
   useEffect(() => {
-    const airtableBase = new Airtable({apiKey: 'patUNai9hvj45F6Iw.6f300d5e97059eebf0de31f5216e4e78a998b40868990b087175b05b8feed0d0'}).base('appbC9nRPU0orhMtd');
+    const airtableBase = new Airtable({apiKey: import.meta.env.VITE_REACT_APP_AIRTABLE_API_KEY}).base(import.meta.env.VITE_REACT_APP_AIRTABLE_BASE_ID);
     airtableBase('Transportistas').select({
       view: "Grid view"
     }).eachPage((records, fetchNextPage) => {
